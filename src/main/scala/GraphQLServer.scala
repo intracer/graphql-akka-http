@@ -17,11 +17,11 @@ object GraphQLServer {
 
   case object TooComplexQuery extends Exception
 
-  val rejectComplexQueries = QueryReducer.rejectComplexQueries(300, (_: Double, _:ShopRepository) => TooComplexQuery)
+  val rejectComplexQueries = QueryReducer.rejectComplexQueries(300, (_: Double, _: ShopRepository) => TooComplexQuery)
 
-  val exceptionHandler: Executor.ExceptionHandler = {
+  val exceptionHandler: Executor.ExceptionHandler = sangria.execution.ExceptionHandler(onException = {
     case (_, TooComplexQuery) => HandledException("Too complex query. Please reduce the field selection")
-  }
+  })
 
   def endpoint(requestJSON: JsValue)(implicit e: ExecutionContext): Route = {
 
@@ -49,15 +49,15 @@ object GraphQLServer {
 
   private def executeGraphQLQuery(query: Document, op: Option[String], vars: JsObject)(implicit e: ExecutionContext) = {
     Executor.execute(
-      SchemaDef.ShopSchema,
-      query,
-      repository,
-      variables = vars,
-      operationName = op,
-      deferredResolver = SchemaDef.deferredResolver,
-      exceptionHandler = exceptionHandler,
-      queryReducers = rejectComplexQueries :: Nil
-    ).map(OK -> _)
+        SchemaDef.ShopSchema,
+        query,
+        repository,
+        variables = vars,
+        operationName = op,
+        deferredResolver = SchemaDef.deferredResolver,
+        exceptionHandler = exceptionHandler,
+        queryReducers = rejectComplexQueries :: Nil
+      ).map(OK -> _)
       .recover {
         case error: QueryAnalysisError => BadRequest -> error.resolveError
         case error: ErrorWithResolver => InternalServerError -> error.resolveError

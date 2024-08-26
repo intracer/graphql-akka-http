@@ -9,8 +9,8 @@ scalaVersion := "2.12.2"
 scalacOptions ++= Seq("-deprecation", "-feature")
 
 libraryDependencies ++= Seq(
-  "org.sangria-graphql" %% "sangria" % "1.2.2",
-  "org.sangria-graphql" %% "sangria-spray-json" % "1.0.0",
+  "org.sangria-graphql" %% "sangria" % "4.1.1",
+  "org.sangria-graphql" %% "sangria-spray-json" % "1.0.3",
   "com.typesafe.akka" %% "akka-http" % "10.0.7",
   "com.typesafe.akka" %% "akka-http-spray-json" % "10.0.7",
 
@@ -19,7 +19,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick-hikaricp" % "3.2.0",
   "com.h2database" % "h2" % "1.4.193",
 
-  "org.scalatest" %% "scalatest" % "3.0.1" % Test
+  "org.scalatest" %% "scalatest" % "3.0.9" % Test
 )
 
 Revolver.settings
